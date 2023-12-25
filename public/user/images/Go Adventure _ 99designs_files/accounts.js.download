@@ -1,0 +1,80 @@
+(function() {
+    function getAndDeleteCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+
+        if (parts.length == 2) {
+            document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            return parts.pop().split(";").shift();
+        }
+    }
+
+    var cookie = getAndDeleteCookie('_99ud');
+
+    if (!cookie) {
+        console.log("analytics disabled, cookie missing");
+    } else {
+        var data = {};
+
+        try {
+            data = JSON.parse(atob(cookie));
+        } catch(error) {
+            throw new Error(error + ' malformedData: ' + cookie);
+        }
+
+        window.dataLayer = window.dataLayer || [];
+        dataLayer.push(data.gtm);
+
+        window.accountsUser = data.user;
+        window.trackParams = data.trackParams;
+        window.pageTrackParams = {
+            country_code: "MA",
+            domain_sessionidx: 1,
+            device_family: "Other",
+            device_os: "Windows 10",
+            br_family: "Chrome",
+            br_version: "120.0.0",
+        };
+
+        
+
+        
+        !function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t,e){var n=document.createElement("script");n.type="text/javascript";n.async=!0;n.src="https://cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(n,a);analytics._loadOptions=e};analytics.SNIPPET_VERSION="4.1.0";}}();
+        analytics.setAnonymousId(data.sessionId);
+        analytics.page({
+            url: document.location.href,
+            path: document.location.pathname,
+            country_code: "MA",
+            domain_sessionidx: 1,
+            device_family: "Other",
+            device_os: "Windows 10",
+            br_family: "Chrome",
+            br_version: "120.0.0",
+        })
+        
+
+        
+
+        if (!data.IsAdminMasquerading) {
+            analytics.load("uGchVqH1N7u7wLNJcBCRg1oIO9Gl6Lpa");
+        }
+
+        
+        if (data.userID) {
+            analytics.identify(
+                data.userID,
+                data.segmentUser,
+                {
+                    integrations: {
+                        // disable identify call for hubspot due to it overloading our HubSpot API limits
+                        'HubSpot': false,
+                        // disable identify call for Iterable due to hitting API limits
+                        'Iterable': false,
+                    }
+                }
+            );
+
+            
+        }
+    }
+})();
